@@ -5,6 +5,7 @@ import { useEffect, useMemo, useRef, useState } from "react";
 import { ScooterIcon } from "@/components/scooter-icon";
 import type { Scene } from "@/data/scenes";
 import { getDailyScene } from "@/lib/daily-scene";
+import { getRarityLabel } from "@/lib/rarity-label";
 import { buildShareText } from "@/lib/share-copy";
 import { shareEverywhere } from "@/lib/share-everywhere";
 
@@ -139,6 +140,7 @@ export function DeliveryExperience() {
   }
 
   const mapVariant = mapVariantFor(scene);
+  const rarityLabel = scene ? getRarityLabel(scene.rarity) : null;
 
   return (
     <main className="stage">
@@ -156,6 +158,11 @@ export function DeliveryExperience() {
           <h1 className="tracking-headline" aria-live="polite">
             {scene?.headline ?? <span className="headline-skeleton" />}
           </h1>
+          {rarityLabel ? (
+            <p className={`rarity-note rarity-note-${rarityLabel.tone}`}>
+              {rarityLabel.text}
+            </p>
+          ) : null}
           <div className="progress" aria-hidden="true">
             <span className="progress-dot start" />
             <span className="progress-line done" />
