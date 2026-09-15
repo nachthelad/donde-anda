@@ -147,7 +147,6 @@ export function DeliveryExperience() {
         <section className="purchase-card">
           <h2>Detalle de la compra</h2>
           <div className="purchase-row">
-            <span className="home-icon" aria-hidden="true">N</span>
             <div>Creado por <a href="https://nachthelad.com.ar" target="_blank" rel="noopener noreferrer">nachthelad</a></div>
           </div>
         </section>

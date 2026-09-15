@@ -145,11 +145,10 @@ button, a { font: inherit; }
 
 .purchase-card { width: calc(100% - 40px); margin: 31px auto 40px; border-radius: 10px; background: #fff; box-shadow: 0 5px 16px rgba(26,31,37,.08); overflow: hidden; }
 .purchase-card h2 { margin: 0; padding: 18px; border-bottom: 1px solid #e2e3e5; font-size: 16px; }
-.purchase-row { display: grid; grid-template-columns: 42px 1fr; gap: 10px; align-items: center; padding: 18px; }
+.purchase-row { padding: 18px; }
 .purchase-row div { font-size: 13px; }
 .purchase-row a { color: var(--blue); font-weight: 750; text-underline-offset: 3px; }
 .purchase-row a:focus-visible { outline: 3px solid rgba(52,131,250,.4); outline-offset: 3px; }
-.home-icon { width: 40px; height: 40px; display: grid; place-items: center; border: 1px solid #ddd; border-radius: 5px; font-size: 22px; }
 
 @keyframes shimmer { to { background-position: -200% 0; } }
 
