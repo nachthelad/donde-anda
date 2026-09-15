@@ -33,6 +33,16 @@ function ShareNodesIcon() {
   );
 }
 
+function ScooterIcon() {
+  return (
+    <svg aria-hidden="true" viewBox="0 0 28 20" width="24" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
+      <circle cx="6" cy="16" r="2.6" />
+      <circle cx="21" cy="16" r="2.6" />
+      <path d="M8.6 16h8.8m-7.5-1 2.2-6h5.6l2.2 4.5M12.1 9 9.8 5.5H6.5v4.2h5m6.2-.7h4.1l2.4 4.2M20.8 6h3" />
+    </svg>
+  );
+}
+
 function mapVariantFor(scene: Scene | null) {
   if (!scene) return 1;
   const hash = [...scene.id].reduce((value, character) => ((value * 31) + character.charCodeAt(0)) >>> 0, 0);
@@ -121,7 +131,7 @@ export function DeliveryExperience() {
             <span className="progress-line done" />
             <span className="progress-dot middle" />
             <span className="progress-line done second" />
-            <span className="truck-dot">▣</span>
+            <span className="truck-dot"><ScooterIcon /></span>
             <span className="progress-line pending" />
             <span className="progress-dot end" />
           </div>
