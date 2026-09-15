@@ -4,7 +4,10 @@ import { scenes } from "@/data/scenes";
 type SharePayload = {
   sceneId?: unknown;
   rarity?: unknown;
+  source?: unknown;
 };
+
+const shareSources = ["x", "native"] as const;
 
 function buenosAiresDateKey(date = new Date()): string {
   const parts = new Intl.DateTimeFormat("en-CA", {
@@ -29,8 +32,9 @@ export async function POST(request: Request) {
   const scene = scenes.find(
     (candidate) => candidate.id === payload.sceneId && candidate.rarity === payload.rarity,
   );
+  const source = shareSources.find((candidate) => candidate === payload.source);
 
-  if (!scene) {
+  if (!scene || !source) {
     return Response.json({ ok: false }, { status: 400 });
   }
 
@@ -52,6 +56,7 @@ export async function POST(request: Request) {
     pipeline.hincrby("donde-anda:shares:by-date", buenosAiresDateKey(), 1);
     pipeline.hincrby("donde-anda:shares:by-rarity", scene.rarity, 1);
     pipeline.hincrby("donde-anda:shares:by-scene", scene.id, 1);
+    pipeline.hincrby("donde-anda:shares:by-source", source, 1);
     await pipeline.exec();
 
     return Response.json({ ok: true });

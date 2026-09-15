@@ -113,7 +113,11 @@ button, a { font: inherit; }
 .progress-dot.end { background: #fff; border: 3px solid #b9bdc1; }
 .truck-dot { width: 38px; height: 38px; display: grid; place-items: center; border: 3px solid white; border-radius: 50%; color: white; background: #242424; box-shadow: 0 2px 7px #0003; font-size: 16px; }
 .code-box { height: 50px; display: flex; align-items: center; justify-content: space-between; padding: 0 11px 0 17px; border: 1px solid #e1e3e6; border-radius: 9px; font-size: 13px; }
-.code-value { display: inline-flex; align-items: center; gap: 8px; padding: 7px 9px; border-radius: 5px; background: #edf4ff; font-weight: 800; }
+.code-value { display: inline-flex; align-items: center; gap: 8px; min-width: 81px; justify-content: flex-end; padding: 7px 9px; border: 0; border-radius: 5px; color: inherit; background: #edf4ff; font: inherit; font-weight: 800; cursor: pointer; }
+.code-value:hover { background: #e3eeff; }
+.code-value:active { transform: scale(.97); }
+.code-value:disabled { cursor: default; opacity: .55; }
+.code-value:focus-visible { outline: 3px solid rgba(52,131,250,.4); outline-offset: 2px; }
 .detail-link { display: inline-flex; align-items: center; gap: 5px; margin-top: 16px; color: var(--blue); font-size: 13px; font-weight: 700; }
 
 .share-button {

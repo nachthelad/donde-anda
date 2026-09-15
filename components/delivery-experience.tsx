@@ -1,11 +1,23 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { ScooterIcon } from "@/components/scooter-icon";
 import type { Scene } from "@/data/scenes";
 import { getDailyScene } from "@/lib/daily-scene";
-import { toShareHeadline } from "@/lib/share-copy";
+import { buildShareText } from "@/lib/share-copy";
+import { shareEverywhere } from "@/lib/share-everywhere";
+
+type ShareSource = "x" | "native";
+
+function recordShare(scene: Scene, source: ShareSource) {
+  void fetch("/api/share", {
+    method: "POST",
+    headers: { "content-type": "application/json" },
+    body: JSON.stringify({ sceneId: scene.id, rarity: scene.rarity, source }),
+    keepalive: true,
+  }).catch(() => undefined);
+}
 
 function XIcon() {
   return (
@@ -71,6 +83,8 @@ function SceneMarker({ scene }: { scene: Scene | null }) {
 
 export function DeliveryExperience() {
   const [scene, setScene] = useState<Scene | null>(null);
+  const [keywordCopied, setKeywordCopied] = useState(false);
+  const copiedResetTimer = useRef<number | null>(null);
 
   useEffect(() => {
     const frame = window.requestAnimationFrame(() => {
@@ -93,13 +107,36 @@ export function DeliveryExperience() {
     return () => window.cancelAnimationFrame(frame);
   }, []);
 
+  useEffect(() => () => {
+    if (copiedResetTimer.current !== null) window.clearTimeout(copiedResetTimer.current);
+  }, []);
+
   const shareHref = useMemo(() => {
     if (!scene || typeof window === "undefined") return "https://x.com/intent/tweet";
-    const shareHeadline = toShareHeadline(scene.headline);
-    const text = `${shareHeadline}. ¿Dónde anda el tuyo?`;
+    const text = buildShareText(scene.headline);
     const url = window.location.origin;
     return `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
   }, [scene]);
+
+  async function handleKeywordShare() {
+    if (!scene) return;
+
+    const outcome = await shareEverywhere(buildShareText(scene.headline), window.location.origin, {
+      nativeShare: typeof navigator.share === "function"
+        ? (data) => navigator.share(data)
+        : undefined,
+      copyText: navigator.clipboard?.writeText
+        ? (value) => navigator.clipboard.writeText(value)
+        : undefined,
+    });
+
+    if (outcome === "shared" || outcome === "copied") recordShare(scene, "native");
+    if (outcome !== "copied") return;
+
+    setKeywordCopied(true);
+    if (copiedResetTimer.current !== null) window.clearTimeout(copiedResetTimer.current);
+    copiedResetTimer.current = window.setTimeout(() => setKeywordCopied(false), 1800);
+  }
 
   const mapVariant = mapVariantFor(scene);
 
@@ -130,7 +167,16 @@ export function DeliveryExperience() {
           </div>
           <div className="code-box">
             <span>Clave</span>
-            <span className="code-value">MATE <ShareNodesIcon /></span>
+            <button
+              type="button"
+              className="code-value"
+              onClick={handleKeywordShare}
+              disabled={!scene}
+              aria-label="Compartir resultado en otra aplicación"
+            >
+              <span aria-live="polite">{keywordCopied ? "¡Copiado!" : "MATE"}</span>
+              <ShareNodesIcon />
+            </button>
           </div>
           <span className="detail-link">
             <span>Detalle del envío</span>
@@ -149,12 +195,7 @@ export function DeliveryExperience() {
           tabIndex={scene ? 0 : -1}
           onClick={() => {
             if (!scene) return;
-            void fetch("/api/share", {
-              method: "POST",
-              headers: { "content-type": "application/json" },
-              body: JSON.stringify({ sceneId: scene.id, rarity: scene.rarity }),
-              keepalive: true,
-            }).catch(() => undefined);
+            recordShare(scene, "x");
           }}
         >
           <XIcon />

@@ -20,7 +20,7 @@ afterEach(() => {
 });
 
 describe("share metrics endpoint", () => {
-  it("uses Vercel Marketplace KV aliases and increments four aggregate counters", async () => {
+  it("uses Vercel Marketplace KV aliases and increments five aggregate counters", async () => {
     vi.stubEnv("UPSTASH_REDIS_REST_URL", "");
     vi.stubEnv("UPSTASH_REDIS_REST_TOKEN", "");
     vi.stubEnv("KV_REST_API_URL", "https://redis.example.test");
@@ -29,12 +29,24 @@ describe("share metrics endpoint", () => {
     const response = await POST(new Request("https://example.test/api/share", {
       method: "POST",
       headers: { "content-type": "application/json" },
-      body: JSON.stringify({ sceneId: "mate-stop", rarity: "common" }),
+      body: JSON.stringify({ sceneId: "mate-stop", rarity: "common", source: "native" }),
     }));
 
     expect(response.status).toBe(200);
     expect(mocks.options).toHaveBeenCalledWith({ url: "https://redis.example.test", token: "test-token" });
-    expect(mocks.hincrby).toHaveBeenCalledTimes(4);
+    expect(mocks.hincrby).toHaveBeenCalledTimes(5);
+    expect(mocks.hincrby).toHaveBeenCalledWith("donde-anda:shares:by-source", "native", 1);
     expect(mocks.exec).toHaveBeenCalledOnce();
+  });
+
+  it("rejects an unknown share source", async () => {
+    const response = await POST(new Request("https://example.test/api/share", {
+      method: "POST",
+      headers: { "content-type": "application/json" },
+      body: JSON.stringify({ sceneId: "mate-stop", rarity: "common", source: "other" }),
+    }));
+
+    expect(response.status).toBe(400);
+    expect(mocks.exec).not.toHaveBeenCalled();
   });
 });
