@@ -33,6 +33,12 @@ function ShareNodesIcon() {
   );
 }
 
+function mapVariantFor(scene: Scene | null) {
+  if (!scene) return 1;
+  const hash = [...scene.id].reduce((value, character) => ((value * 31) + character.charCodeAt(0)) >>> 0, 0);
+  return (hash % 3) + 1;
+}
+
 function SceneMarker({ scene }: { scene: Scene | null }) {
   const spriteColumn = scene?.sprite ? scene.sprite.index % 4 : 0;
   const spriteRow = scene?.sprite ? Math.floor(scene.sprite.index / 4) : 0;
@@ -92,10 +98,12 @@ export function DeliveryExperience() {
     return `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
   }, [scene]);
 
+  const mapVariant = mapVariantFor(scene);
+
   return (
     <main className="stage">
       <section className={`phone-shell ${scene ? "is-ready" : "is-loading"}`} aria-label="Seguimiento ficticio de un pedido">
-        <div className="map">
+        <div className={`map map-variant-${mapVariant}`}>
           <button className="round-control back" tabIndex={-1} aria-hidden="true">‹</button>
           <button className="round-control audio" tabIndex={-1} aria-hidden="true"><HeadphonesIcon /></button>
           <div className="map-pin"><span /></div>
@@ -133,7 +141,7 @@ export function DeliveryExperience() {
 
         <a className="share-button" href={shareHref} target="_blank" rel="noopener noreferrer" aria-disabled={!scene} tabIndex={scene ? 0 : -1}>
           <XIcon />
-          <span>¡Compartirlo!</span>
+          <span>¡Compartilo!</span>
         </a>
 
         <section className="purchase-card">

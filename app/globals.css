@@ -36,8 +36,14 @@ button, a { font: inherit; }
   height: 55.5vh;
   min-height: 475px;
   max-height: 600px;
-  background: #e6e8ec url("/map-background.svg") center / cover no-repeat;
+  background-color: #e6e8ec;
+  background-position: center;
+  background-size: cover;
+  background-repeat: no-repeat;
 }
+.map-variant-1 { background-image: url("/maps/map-canal-curvo.png"); }
+.map-variant-2 { background-image: url("/maps/map-plaza-diagonal.png"); }
+.map-variant-3 { background-image: url("/maps/map-canal-puentes.png"); }
 
 .round-control {
   position: absolute;
