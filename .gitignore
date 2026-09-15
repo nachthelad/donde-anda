@@ -1,0 +1,10 @@
+node_modules/
+.next/
+out/
+.vercel/
+.pnpm-store/
+.playwright-cli/
+.codex-remote-attachments/
+output/
+*.log
+.superpowers/
