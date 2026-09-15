@@ -145,6 +145,7 @@ button, a { font: inherit; }
 .purchase-row div { font-size: 13px; }
 .purchase-row a { color: var(--blue); font-weight: 750; text-underline-offset: 3px; }
 .purchase-row a:focus-visible { outline: 3px solid rgba(52,131,250,.4); outline-offset: 3px; }
+.parody-note { margin: 6px 0 0; color: #7b818b; font-size: 11px; line-height: 1.35; }
 
 @keyframes shimmer { to { background-position: -200% 0; } }
 

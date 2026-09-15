@@ -155,6 +155,7 @@ export function DeliveryExperience() {
           <h2>Detalle de la compra</h2>
           <div className="purchase-row">
             <div>Creado por <a href="https://nachthelad.com.ar" target="_blank" rel="noopener noreferrer">nachthelad</a></div>
+            <p className="parody-note">Parodia no afiliada a Mercado Libre.</p>
           </div>
         </section>
       </section>
