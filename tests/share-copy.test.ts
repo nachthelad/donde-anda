@@ -5,7 +5,7 @@ import { toShareHeadline } from "@/lib/share-copy";
 describe("share copy", () => {
   it("writes every delivery result in first person for X", () => {
     for (const scene of scenes) {
-      expect(toShareHeadline(scene.headline).startsWith("Mi repartidor")).toBe(true);
+      expect(toShareHeadline(scene.headline).startsWith("Mi delivery")).toBe(true);
     }
   });
 });
