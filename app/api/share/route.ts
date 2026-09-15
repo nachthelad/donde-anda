@@ -34,17 +34,19 @@ export async function POST(request: Request) {
     return Response.json({ ok: false }, { status: 400 });
   }
 
-  if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+  const redisUrl = process.env.UPSTASH_REDIS_REST_URL || process.env.KV_REST_API_URL;
+  const redisToken = process.env.UPSTASH_REDIS_REST_TOKEN || process.env.KV_REST_API_TOKEN;
+
+  if (!redisUrl || !redisToken) {
     console.error(JSON.stringify({
       level: "error",
       message: "Share metrics configuration is missing",
-      availableRedisEnvironmentKeys: Object.keys(process.env).filter((key) => /UPSTASH|REDIS|KV/.test(key)),
     }));
     return Response.json({ ok: false }, { status: 503 });
   }
 
   try {
-    const redis = Redis.fromEnv();
+    const redis = new Redis({ url: redisUrl, token: redisToken });
     const pipeline = redis.pipeline();
     pipeline.hincrby("donde-anda:shares:totals", "clicks", 1);
     pipeline.hincrby("donde-anda:shares:by-date", buenosAiresDateKey(), 1);
