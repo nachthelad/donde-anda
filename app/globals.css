@@ -66,12 +66,8 @@ button, a { font: inherit; }
 .map-pin span { position: absolute; inset: 8px; border-radius: 50%; background: #fff; }
 .shop-label { position: absolute; z-index: 1; padding: 2px 4px; color: #4d74b6; background: rgba(255,255,255,.64); border-radius: 4px; font-size: 13px; font-weight: 750; text-shadow: 0 1px #fff; white-space: nowrap; }
 .shop-label-one { top: 34%; left: 16%; }
-.shop-label-two { right: 5%; bottom: 21%; color: #c9565a; }
-.shop-label-three { right: 3%; bottom: 9%; color: #e68035; }
 .shop-dot { display: inline-grid; place-items: center; width: 19px; height: 19px; margin-right: 3px; border-radius: 50%; color: white; text-shadow: none; }
 .shop-dot.blue { background: #3292e8; }
-.shop-dot.red { background: #e05f65; }
-.shop-dot.orange { background: #ef8b32; }
 
 .scene-marker {
   position: absolute;

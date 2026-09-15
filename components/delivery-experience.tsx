@@ -108,8 +108,6 @@ export function DeliveryExperience() {
           <button className="round-control audio" tabIndex={-1} aria-hidden="true"><HeadphonesIcon /></button>
           <div className="map-pin"><span /></div>
           <div className="shop-label shop-label-one"><span className="shop-dot blue">▣</span> Óptica Horizonte</div>
-          <div className="shop-label shop-label-two"><span className="shop-dot red">⌂</span> Clínica Belgrano</div>
-          <div className="shop-label shop-label-three"><span className="shop-dot orange">♨</span> PAN Y PUNTO</div>
           <SceneMarker scene={scene} />
           <button className="round-control locate" tabIndex={-1} aria-hidden="true">⌾</button>
         </div>
