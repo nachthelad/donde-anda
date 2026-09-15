@@ -35,6 +35,11 @@ export async function POST(request: Request) {
   }
 
   if (!process.env.UPSTASH_REDIS_REST_URL || !process.env.UPSTASH_REDIS_REST_TOKEN) {
+    console.error(JSON.stringify({
+      level: "error",
+      message: "Share metrics configuration is missing",
+      availableRedisEnvironmentKeys: Object.keys(process.env).filter((key) => /UPSTASH|REDIS|KV/.test(key)),
+    }));
     return Response.json({ ok: false }, { status: 503 });
   }
 
@@ -48,7 +53,12 @@ export async function POST(request: Request) {
     await pipeline.exec();
 
     return Response.json({ ok: true });
-  } catch {
+  } catch (error) {
+    console.error(JSON.stringify({
+      level: "error",
+      message: "Share metric write failed",
+      errorType: error instanceof Error ? error.name : "UnknownError",
+    }));
     return Response.json({ ok: false }, { status: 503 });
   }
 }
