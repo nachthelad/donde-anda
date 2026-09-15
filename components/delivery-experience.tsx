@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import type { Scene } from "@/data/scenes";
 import { getDailyScene } from "@/lib/daily-scene";
+import { toShareHeadline } from "@/lib/share-copy";
 
 function XIcon() {
   return (
@@ -102,7 +103,8 @@ export function DeliveryExperience() {
 
   const shareHref = useMemo(() => {
     if (!scene || typeof window === "undefined") return "https://x.com/intent/tweet";
-    const text = `${scene.headline}. ¿Dónde anda el tuyo?`;
+    const shareHeadline = toShareHeadline(scene.headline);
+    const text = `${shareHeadline}. ¿Dónde anda el tuyo?`;
     const url = window.location.origin;
     return `https://x.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`;
   }, [scene]);
@@ -146,7 +148,23 @@ export function DeliveryExperience() {
           </span>
         </section>
 
-        <a className="share-button" href={shareHref} target="_blank" rel="noopener noreferrer" aria-disabled={!scene} tabIndex={scene ? 0 : -1}>
+        <a
+          className="share-button"
+          href={shareHref}
+          target="_blank"
+          rel="noopener noreferrer"
+          aria-disabled={!scene}
+          tabIndex={scene ? 0 : -1}
+          onClick={() => {
+            if (!scene) return;
+            void fetch("/api/share", {
+              method: "POST",
+              headers: { "content-type": "application/json" },
+              body: JSON.stringify({ sceneId: scene.id, rarity: scene.rarity }),
+              keepalive: true,
+            }).catch(() => undefined);
+          }}
+        >
           <XIcon />
           <span>¡Compartilo!</span>
         </a>
