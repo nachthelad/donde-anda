@@ -35,10 +35,9 @@ function ShareNodesIcon() {
 
 function ScooterIcon() {
   return (
-    <svg aria-hidden="true" viewBox="0 0 28 20" width="24" height="18" fill="none" stroke="currentColor" strokeWidth="1.8" strokeLinecap="round" strokeLinejoin="round">
-      <circle cx="6" cy="16" r="2.6" />
-      <circle cx="21" cy="16" r="2.6" />
-      <path d="M8.6 16h8.8m-7.5-1 2.2-6h5.6l2.2 4.5M12.1 9 9.8 5.5H6.5v4.2h5m6.2-.7h4.1l2.4 4.2M20.8 6h3" />
+    // Material Design Icons "two_wheeler", Apache License 2.0.
+    <svg aria-hidden="true" viewBox="0 0 24 24" width="25" height="25" fill="currentColor">
+      <path d="M20 11c-.18 0-.36.03-.53.05L17.41 9H20V6l-3.72 1.86L13.41 5H9v2h3.59l2 2H11l-4 2-2-2H0v2h4a4 4 0 1 0 4 4l2 2h3l3.49-6.1 1.01 1.01A3.98 3.98 0 0 0 16 15a4 4 0 1 0 4-4ZM4 17a2 2 0 1 1 0-4 2 2 0 0 1 0 4Zm16 0a2 2 0 1 1 0-4 2 2 0 0 1 0 4Z" />
     </svg>
   );
 }
