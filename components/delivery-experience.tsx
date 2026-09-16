@@ -1,13 +1,31 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import { ScooterIcon } from "@/components/scooter-icon";
 import type { Scene } from "@/data/scenes";
 import { getDailyScene } from "@/lib/daily-scene";
+import {
+  MAP_OVERLAY,
+  SCENE_BADGE_ART,
+  SCENE_SPRITE_SHEET,
+  sceneSpriteLayerStyle,
+} from "@/lib/map-overlays";
 import { getRarityLabel } from "@/lib/rarity-label";
 import { buildShareText } from "@/lib/share-copy";
 import { shareEverywhere } from "@/lib/share-everywhere";
+
+const overlayVars = {
+  "--map-marker-size": MAP_OVERLAY.markerSize,
+  "--map-control-size": MAP_OVERLAY.controlSize,
+  "--map-gutter": MAP_OVERLAY.gutter,
+  "--map-pin-width": MAP_OVERLAY.pinWidth,
+  "--map-pin-height": MAP_OVERLAY.pinHeight,
+  "--map-marker-bottom": MAP_OVERLAY.markerBottom,
+  "--map-locate-bottom": MAP_OVERLAY.locateBottom,
+  "--scene-png-scale": String(SCENE_BADGE_ART.pngScale),
+  "--scene-png-shift-y": SCENE_BADGE_ART.pngShiftY,
+} as CSSProperties;
 
 type ShareSource = "x" | "native";
 
@@ -55,24 +73,23 @@ function mapVariantFor(scene: Scene | null) {
 }
 
 function SceneMarker({ scene }: { scene: Scene | null }) {
-  const spriteColumn = scene?.sprite ? scene.sprite.index % 4 : 0;
-  const spriteRow = scene?.sprite ? Math.floor(scene.sprite.index / 4) : 0;
+  const spriteStyle = scene?.sprite ? sceneSpriteLayerStyle(scene.sprite.index) : null;
 
   return (
     <div className="scene-marker" aria-hidden="true">
       {scene?.iconSrc ? (
         <Image src={scene.iconSrc} alt="" width={96} height={96} priority className="scene-marker-image" />
-      ) : scene?.sprite ? (
+      ) : scene?.sprite && spriteStyle ? (
         <span className="sprite-window">
           <Image
             src={scene.sprite.src}
             alt=""
-            width={1792}
-            height={1024}
-            sizes="248px"
+            width={SCENE_SPRITE_SHEET.width}
+            height={SCENE_SPRITE_SHEET.height}
+            sizes="(max-width: 700px) 70vw, 300px"
             priority
             className="scene-marker-sprite"
-            style={{ left: `${spriteColumn * -62}px`, top: `${spriteRow * -71}px` }}
+            style={spriteStyle}
           />
         </span>
       ) : (
@@ -144,7 +161,11 @@ export function DeliveryExperience() {
 
   return (
     <main className="stage">
-      <section className={`phone-shell ${scene ? "is-ready" : "is-loading"}`} aria-label="Seguimiento ficticio de un pedido">
+      <section
+        className={`phone-shell ${scene ? "is-ready" : "is-loading"}`}
+        aria-label="Seguimiento ficticio de un pedido"
+        style={overlayVars}
+      >
         <div className={`map map-variant-${mapVariant}`}>
           <button className="round-control back" tabIndex={-1} aria-hidden="true">‹</button>
           <button className="round-control audio" tabIndex={-1} aria-hidden="true"><HeadphonesIcon /></button>
