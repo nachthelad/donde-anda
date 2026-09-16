@@ -2,6 +2,7 @@ import { describe, expect, it } from "vitest";
 import { scenes } from "@/data/scenes";
 import {
   MAP_OVERLAY,
+  SCENE_BADGE_ART,
   SCENE_SPRITE_CELL_ZOOM,
   SCENE_SPRITE_SHEET,
   sceneSpriteLayerStyle,
@@ -98,5 +99,15 @@ describe("map overlay tokens", () => {
       expect(scene.sprite.index).toBeGreaterThanOrEqual(0);
       expect(scene.sprite.index).toBeLessThan(cellCount);
     }
+  });
+});
+
+describe("scene badge art fit", () => {
+  it("keeps PNG art square and optically lifted inside the badge", () => {
+    expect(SCENE_BADGE_ART.pngScale).toBeGreaterThan(1);
+    expect(SCENE_BADGE_ART.pngScale).toBeLessThan(1.35);
+    expect(SCENE_BADGE_ART.pngShiftY).toMatch(/^-?\d+(\.\d+)?%$/);
+    expect(Number.parseFloat(SCENE_BADGE_ART.pngShiftY)).toBeLessThan(0);
+    expect(JSON.stringify(SCENE_BADGE_ART)).not.toMatch(/px|vh|vw|dvh/);
   });
 });

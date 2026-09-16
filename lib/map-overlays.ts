@@ -41,3 +41,9 @@ export const MAP_OVERLAY = {
   markerBottom: "calc(var(--card-overlap) + 4.2cqi)",
   locateBottom: "calc(var(--card-overlap) + 4.2cqi)",
 } as const;
+
+/** Square fill plus a slight lift so padded PNG art sits optically in the badge. */
+export const SCENE_BADGE_ART = {
+  pngScale: 1.16,
+  pngShiftY: "-4%",
+} as const;

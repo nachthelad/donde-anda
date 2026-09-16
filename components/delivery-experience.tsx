@@ -7,6 +7,7 @@ import type { Scene } from "@/data/scenes";
 import { getDailyScene } from "@/lib/daily-scene";
 import {
   MAP_OVERLAY,
+  SCENE_BADGE_ART,
   SCENE_SPRITE_SHEET,
   sceneSpriteLayerStyle,
 } from "@/lib/map-overlays";
@@ -22,6 +23,8 @@ const overlayVars = {
   "--map-pin-height": MAP_OVERLAY.pinHeight,
   "--map-marker-bottom": MAP_OVERLAY.markerBottom,
   "--map-locate-bottom": MAP_OVERLAY.locateBottom,
+  "--scene-png-scale": String(SCENE_BADGE_ART.pngScale),
+  "--scene-png-shift-y": SCENE_BADGE_ART.pngShiftY,
 } as CSSProperties;
 
 type ShareSource = "x" | "native";
