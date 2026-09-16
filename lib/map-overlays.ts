@@ -6,7 +6,7 @@ export const SCENE_SPRITE_SHEET = {
 } as const;
 
 /** Uniform zoom into each square cell so padded sprite art fills the badge. */
-export const SCENE_SPRITE_CELL_ZOOM = 1.18;
+export const SCENE_SPRITE_CELL_ZOOM = 1.22;
 
 export type SceneSpriteLayerStyle = {
   width: string;

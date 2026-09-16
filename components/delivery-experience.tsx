@@ -83,7 +83,7 @@ function SceneMarker({ scene }: { scene: Scene | null }) {
             alt=""
             width={SCENE_SPRITE_SHEET.width}
             height={SCENE_SPRITE_SHEET.height}
-            sizes="15vw"
+            sizes="(max-width: 700px) 70vw, 300px"
             priority
             className="scene-marker-sprite"
             style={spriteStyle}
