@@ -108,6 +108,7 @@ describe("scene badge art fit", () => {
     expect(SCENE_BADGE_ART.pngScale).toBeLessThan(1.35);
     expect(SCENE_BADGE_ART.pngShiftY).toMatch(/^-?\d+(\.\d+)?%$/);
     expect(Number.parseFloat(SCENE_BADGE_ART.pngShiftY)).toBeLessThan(0);
+    expect(Number.parseFloat(SCENE_BADGE_ART.pngShiftY)).toBeGreaterThan(-5);
     expect(JSON.stringify(SCENE_BADGE_ART)).not.toMatch(/px|vh|vw|dvh/);
   });
 });

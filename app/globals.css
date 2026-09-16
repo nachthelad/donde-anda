@@ -111,7 +111,7 @@ button, a { font: inherit; }
   min-height: 0;
   object-fit: contain;
   object-position: center;
-  transform: scale(var(--scene-png-scale, 1.16)) translateY(var(--scene-png-shift-y, -4%));
+  transform: scale(var(--scene-png-scale, 1.16)) translateY(var(--scene-png-shift-y, -2%));
   transform-origin: center center;
   filter: drop-shadow(0 2px 2px rgba(0,0,0,.18));
 }
