@@ -7,8 +7,8 @@ import type { Scene } from "@/data/scenes";
 import { getDailyScene } from "@/lib/daily-scene";
 import {
   MAP_OVERLAY,
-  SCENE_BADGE_ART,
   SCENE_SPRITE_SHEET,
+  scenePngLayerStyle,
   sceneSpriteLayerStyle,
 } from "@/lib/map-overlays";
 import { getRarityLabel } from "@/lib/rarity-label";
@@ -23,8 +23,6 @@ const overlayVars = {
   "--map-pin-height": MAP_OVERLAY.pinHeight,
   "--map-marker-bottom": MAP_OVERLAY.markerBottom,
   "--map-locate-bottom": MAP_OVERLAY.locateBottom,
-  "--scene-png-scale": String(SCENE_BADGE_ART.pngScale),
-  "--scene-png-shift-y": SCENE_BADGE_ART.pngShiftY,
 } as CSSProperties;
 
 type ShareSource = "x" | "native";
@@ -73,12 +71,13 @@ function mapVariantFor(scene: Scene | null) {
 }
 
 function SceneMarker({ scene }: { scene: Scene | null }) {
-  const spriteStyle = scene?.sprite ? sceneSpriteLayerStyle(scene.sprite.index) : null;
+  const pngStyle = scene?.iconSrc ? scenePngLayerStyle(scene.iconSrc) : null;
+  const spriteStyle = scene?.sprite ? sceneSpriteLayerStyle(scene.sprite.src, scene.sprite.index) : null;
 
   return (
     <div className="scene-marker" aria-hidden="true">
-      {scene?.iconSrc ? (
-        <Image src={scene.iconSrc} alt="" width={96} height={96} priority className="scene-marker-image" />
+      {scene?.iconSrc && pngStyle ? (
+        <Image src={scene.iconSrc} alt="" width={96} height={96} priority className="scene-marker-image" style={pngStyle} />
       ) : scene?.sprite && spriteStyle ? (
         <span className="sprite-window">
           <Image
