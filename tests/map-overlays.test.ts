@@ -2,10 +2,14 @@ import { describe, expect, it } from "vitest";
 import { scenes } from "@/data/scenes";
 import {
   MAP_OVERLAY,
-  SCENE_BADGE_ART,
-  SCENE_SPRITE_CELL_ZOOM,
+  SCENE_BADGE_INSET,
   SCENE_SPRITE_SHEET,
+  contentBoxOnBadge,
+  imageLayerStyle,
+  pngContentBox,
+  scenePngLayerStyle,
   sceneSpriteLayerStyle,
+  spriteContentBox,
 } from "@/lib/map-overlays";
 
 function parsePercent(value: string): number {
@@ -13,7 +17,7 @@ function parsePercent(value: string): number {
   return Number.parseFloat(value);
 }
 
-describe("scene sprite layer", () => {
+describe("scene sprite sheet", () => {
   it("models the sprite sheets as a square 4x2 grid", () => {
     expect(SCENE_SPRITE_SHEET.columns / SCENE_SPRITE_SHEET.rows).toBe(
       SCENE_SPRITE_SHEET.width / SCENE_SPRITE_SHEET.height,
@@ -23,51 +27,56 @@ describe("scene sprite layer", () => {
     );
   });
 
-  it("offsets each cell with percentages of the sprite window, not pixels", () => {
-    const origin = sceneSpriteLayerStyle(0, 1);
-    const lastColumn = sceneSpriteLayerStyle(3, 1);
-    const secondRow = sceneSpriteLayerStyle(4, 1);
-
-    expect(origin).toEqual({
-      width: "400%",
-      height: "200%",
-      left: "0%",
-      top: "0%",
-    });
-    expect(lastColumn.left).toBe("-300%");
-    expect(lastColumn.top).toBe("0%");
-    expect(secondRow.left).toBe("0%");
-    expect(secondRow.top).toBe("-100%");
-
-    for (const style of [origin, lastColumn, secondRow]) {
-      expect(JSON.stringify(style)).not.toMatch(/px|vh|vw|dvh/);
+  it("fits every catalog sprite index on the 4x2 sheet", () => {
+    const cellCount = SCENE_SPRITE_SHEET.columns * SCENE_SPRITE_SHEET.rows;
+    for (const scene of scenes) {
+      if (!scene.sprite) continue;
+      expect(scene.sprite.index).toBeGreaterThanOrEqual(0);
+      expect(scene.sprite.index).toBeLessThan(cellCount);
+      expect(spriteContentBox(scene.sprite.src, scene.sprite.index)).not.toBeNull();
     }
   });
+});
 
-  it("zooms uniformly into the cell so art stays centered while filling the badge", () => {
-    expect(SCENE_SPRITE_CELL_ZOOM).toBeGreaterThan(1);
-    expect(SCENE_SPRITE_CELL_ZOOM).toBeLessThan(1.4);
+describe("imageLayerStyle", () => {
+  it("contains opaque art in the square badge using percentages, not pixels", () => {
+    expect(SCENE_BADGE_INSET).toBeGreaterThan(0);
+    expect(SCENE_BADGE_INSET).toBeLessThan(0.2);
 
-    const style = sceneSpriteLayerStyle(0);
+    const style = imageLayerStyle(
+      { width: 1000, height: 1000 },
+      { x: 100, y: 100, width: 800, height: 800 },
+    );
     const width = parsePercent(style.width);
-    const height = parsePercent(style.height);
     const left = parsePercent(style.left);
     const top = parsePercent(style.top);
 
-    expect(width / height).toBeCloseTo(SCENE_SPRITE_SHEET.columns / SCENE_SPRITE_SHEET.rows, 6);
-    expect(width).toBeCloseTo(SCENE_SPRITE_SHEET.columns * SCENE_SPRITE_CELL_ZOOM * 100, 6);
+    expect(width).toBeCloseTo((1000 / 800) * (1 - SCENE_BADGE_INSET) * 100, 6);
     expect(left).toBeCloseTo(top, 6);
-    expect(left).toBeLessThan(0);
+    expect(JSON.stringify(style)).not.toMatch(/px|vh|vw|dvh/);
+  });
 
-    const shifted = sceneSpriteLayerStyle(5);
-    expect(parsePercent(shifted.left)).toBeCloseTo(
-      -((5 % SCENE_SPRITE_SHEET.columns) * SCENE_SPRITE_CELL_ZOOM * 100) + left,
-      6,
-    );
-    expect(parsePercent(shifted.top)).toBeCloseTo(
-      -(Math.floor(5 / SCENE_SPRITE_SHEET.columns) * SCENE_SPRITE_CELL_ZOOM * 100) + top,
-      6,
-    );
+  it("keeps the full art box inside the badge", () => {
+    const castle = spriteContentBox("/icons/sprite-common-a.png", 4);
+    expect(castle).not.toBeNull();
+    const box = contentBoxOnBadge(castle!);
+    expect(box.left).toBeGreaterThanOrEqual(0);
+    expect(box.top).toBeGreaterThanOrEqual(0);
+    expect(box.right).toBeLessThanOrEqual(1);
+    expect(box.bottom).toBeLessThanOrEqual(1);
+    expect(box.top).toBeGreaterThan(SCENE_BADGE_INSET / 4);
+    expect(box.left).toBeGreaterThan(SCENE_BADGE_INSET / 4);
+    expect(1 - box.bottom).toBeGreaterThan(SCENE_BADGE_INSET / 4);
+    expect(1 - box.right).toBeGreaterThan(SCENE_BADGE_INSET / 4);
+  });
+
+  it("letterboxes tall art instead of clipping it", () => {
+    const traffic = spriteContentBox("/icons/sprite-common-a.png", 0);
+    expect(traffic).not.toBeNull();
+    const box = contentBoxOnBadge(traffic!);
+    expect(box.top).toBeCloseTo(SCENE_BADGE_INSET / 2, 5);
+    expect(box.bottom).toBeCloseTo(1 - SCENE_BADGE_INSET / 2, 5);
+    expect(box.left).toBeGreaterThan(SCENE_BADGE_INSET / 2);
   });
 });
 
@@ -91,24 +100,23 @@ describe("map overlay tokens", () => {
     expect(MAP_OVERLAY.markerBottom).toContain("var(--card-overlap)");
     expect(MAP_OVERLAY.markerBottom).toMatch(/cqi|%/);
   });
-
-  it("fits every catalog sprite index on the 4x2 sheet", () => {
-    const cellCount = SCENE_SPRITE_SHEET.columns * SCENE_SPRITE_SHEET.rows;
-    for (const scene of scenes) {
-      if (!scene.sprite) continue;
-      expect(scene.sprite.index).toBeGreaterThanOrEqual(0);
-      expect(scene.sprite.index).toBeLessThan(cellCount);
-    }
-  });
 });
 
-describe("scene badge art fit", () => {
-  it("keeps PNG art square and optically lifted inside the badge", () => {
-    expect(SCENE_BADGE_ART.pngScale).toBeGreaterThan(1);
-    expect(SCENE_BADGE_ART.pngScale).toBeLessThan(1.35);
-    expect(SCENE_BADGE_ART.pngShiftY).toMatch(/^-?\d+(\.\d+)?%$/);
-    expect(Number.parseFloat(SCENE_BADGE_ART.pngShiftY)).toBeLessThan(0);
-    expect(Number.parseFloat(SCENE_BADGE_ART.pngShiftY)).toBeGreaterThan(-5);
-    expect(JSON.stringify(SCENE_BADGE_ART)).not.toMatch(/px|vh|vw|dvh/);
+describe("scene badge catalog", () => {
+  it("can fit every PNG and sprite scene with the shared contain rule", () => {
+    for (const scene of scenes) {
+      if (scene.iconSrc) {
+        expect(pngContentBox(scene.iconSrc)).not.toBeNull();
+        const style = scenePngLayerStyle(scene.iconSrc);
+        expect(style).not.toBeNull();
+        expect(JSON.stringify(style)).not.toMatch(/px|vh|vw|dvh/);
+      } else if (scene.sprite) {
+        const style = sceneSpriteLayerStyle(scene.sprite.src, scene.sprite.index);
+        expect(style).not.toBeNull();
+        expect(JSON.stringify(style)).not.toMatch(/px|vh|vw|dvh/);
+      } else {
+        throw new Error(`scene ${scene.id} has no art`);
+      }
+    }
   });
 });
